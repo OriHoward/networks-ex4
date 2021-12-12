@@ -5,11 +5,14 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <netinet/in.h>
+#include <time.h>
+
 
 int sock;
 int bnd;
 int lstn;
 int accpt;
+char buf[1024] = {0};
 FILE *fp;
 int numOfBytes;
 socklen_t len;
@@ -39,21 +42,29 @@ int main(int argc, char **argv) {
         perror("accept");
         return -1;
     }
-    fp = fopen("1gb.txt", "r");
+    fp = fopen("SampleTextFile_20kb.txt", "r");
+    clock_t start,end;
+    start = clock();
     do {
-        numOfBytes = recv(sock, fp, 256, 0);
+        numOfBytes = recv(sock,buf, 1024, 0);
+        printf("%d",numOfBytes);
         if (numOfBytes == -1) {
             perror("recv");
             return -1;
         }
     } while (numOfBytes != 0);
-    // need to measure times
+    end = clock() - start;
+    double first_loop = (double) (end)/CLOCKS_PER_SEC;
+    start= clock();
     do {
-        numOfBytes = recv(sock, fp, 256, 0);
+        numOfBytes = recv(sock,buf , 1024, 0);
         if (numOfBytes == -1) {
             perror("recv");
             return -1;
         }
     } while (numOfBytes != 0);
+    end = clock() - start;
+    double second_loop = (double) (end)/CLOCKS_PER_SEC;
+    printf("%f , %f",first_loop,second_loop);
     return 0;
 }

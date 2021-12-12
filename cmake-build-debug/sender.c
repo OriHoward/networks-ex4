@@ -15,7 +15,7 @@
 int sock;
 int conn;
 FILE *fp;
-char buf[256];
+char buf[1024];
 socklen_t len;
 int totalBytes = 0;
 struct sockaddr_in server;
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     }
 
 //    send file
-    fp = fopen("1gb.txt", "r");
+    fp = fopen("SampleTextFile_20kb.txt", "r");
     for (int i = 0; i < 5; ++i) {
         totalBytes += send(sock, fp, 1024, 0);
     }
@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < 5; ++i) {
         totalBytes += send(sock, fp, 1024, 0);
     }
+    printf("%d",totalBytes);
 
     len = sizeof(buf);
     if (getsockopt(sock, IPPROTO_IP, TCP_CONGESTION, buf, &len) != 0) {
