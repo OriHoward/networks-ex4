@@ -1,7 +1,3 @@
-//
-// Created by Oriho on 10/12/2021.
-// AWESOME
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h>
@@ -11,19 +7,33 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <netinet/tcp.h>
+#include <stdlib.h>
 
 int sock;
 int conn;
 FILE *fp;
 char buf[256];
+char *filename = "1gb.txt";
 socklen_t len;
 int totalBytes = 0;
 struct sockaddr_in server;
 
+void send_file(FILE *fp, int sock) {
+    char data[256] = {0};
+
+    while (fgets(data, 256, fp) != NULL) {
+        if (send(sock, data, sizeof(data), 0) == -1) {
+            perror("error in sending");
+            exit(1);
+        }
+        bzero(data, 256);
+    }
+}
+
 
 int main(int argc, char **argv) {
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1) {
+    if (sock < 0) {
         perror("socket");
         return -1;
     }
@@ -37,16 +47,16 @@ int main(int argc, char **argv) {
     }
 
 //    send file
-    fp = fopen("SampleTextFile_20kb.txt", "r");
-//    *buf = *fgets(buf, 256, fp);
-    if( fgets (buf, 60, fp)!=NULL ) {
-        /* writing content to stdout */
-        puts(buf);
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("reading file");
+        exit(1);
     }
 
     for (int i = 0; i < 5; ++i) {
-        totalBytes += send(sock, buf, 256, 0);
+        send_file(fp, sock);
     }
+    printf("first send successful");
 
     len = sizeof(buf);
 

@@ -20,7 +20,7 @@ struct sockaddr_in server;
 
 int main(int argc, char **argv) {
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1) {
+    if (sock < 0) {
         perror("socket");
         return -1;
     }
@@ -50,12 +50,12 @@ int main(int argc, char **argv) {
     start = clock();
     do {
         numOfBytes = recv(accpt, buf, 256, 0);
-        printf("%d", numOfBytes);
-        if (numOfBytes == -1) {
-            perror("recv");
-            return -1;
-        }
-    } while (numOfBytes != 0);
+//        printf("%d", numOfBytes);
+//        if (numOfBytes == -1) {
+//            perror("recv");
+//            return -1;
+//        }
+    } while (numOfBytes > 0);
     end = clock() - start;
     double first_loop = (double) (end) / CLOCKS_PER_SEC;
     printf("time finished\n");
@@ -64,11 +64,11 @@ int main(int argc, char **argv) {
 
     do {
         numOfBytes = recv(accpt, buf, 256, 0);
-        if (numOfBytes == -1) {
-            perror("recv");
-            return -1;
-        }
-    } while (numOfBytes != 0);
+//        if (numOfBytes == -1) {
+//            perror("recv");
+//            return -1;
+//        }
+    } while (numOfBytes > 0);
     end = clock() - start;
     printf("time finished\n");
 
