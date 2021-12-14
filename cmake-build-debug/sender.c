@@ -15,7 +15,7 @@
 int sock;
 int conn;
 FILE *fp;
-char buf[1024];
+char buf[256];
 socklen_t len;
 int totalBytes = 0;
 struct sockaddr_in server;
@@ -38,8 +38,14 @@ int main(int argc, char **argv) {
 
 //    send file
     fp = fopen("SampleTextFile_20kb.txt", "r");
+//    *buf = *fgets(buf, 256, fp);
+    if( fgets (buf, 60, fp)!=NULL ) {
+        /* writing content to stdout */
+        puts(buf);
+    }
+
     for (int i = 0; i < 5; ++i) {
-        totalBytes += send(sock, fp, 1024, 0);
+        totalBytes += send(sock, buf, 256, 0);
     }
 
     len = sizeof(buf);
@@ -49,7 +55,7 @@ int main(int argc, char **argv) {
         perror("getsockopt");
         return -1;
     }
-
+    puts(buf);
     printf("Current: %s\n", buf);
 
     //reno
@@ -62,9 +68,8 @@ int main(int argc, char **argv) {
 
     //send file
     for (int i = 0; i < 5; ++i) {
-        totalBytes += send(sock, fp, 1024, 0);
+        totalBytes += send(sock, fgets(buf, 256, fp), 256, 0);
     }
-    printf("%d",totalBytes);
 
     len = sizeof(buf);
     if (getsockopt(sock, IPPROTO_IP, TCP_CONGESTION, buf, &len) != 0) {
