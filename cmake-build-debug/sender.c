@@ -57,12 +57,12 @@ int main(int argc, char **argv) {
         send_file();
         printf("Successfully send the %d time!\n", i);
     }
-    printf("first send successful");
+    printf("first send successful\n");
 
     //changing to reno
     strcpy(buf, "reno");
     len = strlen(buf);
-    if (setsockopt(sock, IPPROTO_TCP, TCP_CONGESTION, buf, len) != 0) {
+    if (setsockopt(sock, IPPROTO_IP, TCP_CONGESTION, buf, len) != 0) {
         perror("setsockopt");
         return -1;
     }
@@ -84,4 +84,3 @@ int main(int argc, char **argv) {
     close(sock);
     return 0;
 }
-

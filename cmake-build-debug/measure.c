@@ -1,7 +1,3 @@
-//
-// Created by Oriho on 10/12/2021.
-//
-
 #include <sys/socket.h>
 #include <stdio.h>
 #include <netinet/in.h>
@@ -46,33 +42,24 @@ int main(int argc, char **argv) {
     }
 
     clock_t start, end;
-    printf("\n time started \n");
+
+    printf("time started#1 \n");
     start = clock();
     do {
         numOfBytes = recv(accpt, buf, 256, 0);
-//        printf("%d", numOfBytes);
-//        if (numOfBytes == -1) {
-//            perror("recv");
-//            return -1;
-//        }
     } while (numOfBytes > 0);
     end = clock() - start;
     double first_loop = (double) (end) / CLOCKS_PER_SEC;
-    printf("time finished\n");
+    printf("time finished#1\n");
+    printf("first transfer time: %f \n", first_loop);
     start = clock();
-    printf("\n time started second time \n");
-
+    printf("time started#2\n");
     do {
         numOfBytes = recv(accpt, buf, 256, 0);
-//        if (numOfBytes == -1) {
-//            perror("recv");
-//            return -1;
-//        }
     } while (numOfBytes > 0);
     end = clock() - start;
-    printf("time finished\n");
-
     double second_loop = (double) (end) / CLOCKS_PER_SEC;
-    printf("%f , %f", first_loop, second_loop);
+    printf("time finished#2\n");
+    printf("second transfer time: %f",second_loop);
     return 0;
 }
