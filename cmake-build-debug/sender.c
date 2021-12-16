@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
         perror("setsockopt");
         return -1;
     }
-    printf("Changed to %s", buf);
+    printf("Changed to %s\n", buf);
     //new read of the file
     fp = fopen(filename, "r");
     if (fp == NULL) {
