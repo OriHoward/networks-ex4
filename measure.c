@@ -4,17 +4,18 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+
 int sock;
 int bnd;
 int lstn;
 int accpt;
-char buf[1048576] = {0};
+#define fileSize 1048576
+char buf[fileSize] = {0};
 FILE *fp;
-int numOfBytes = 1;
+int numOfBytes = 0;
 socklen_t len;
 struct sockaddr_in server;
 
-    
 
 int main(int argc, char **argv) {
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,37 +46,40 @@ int main(int argc, char **argv) {
 
 
     struct timeval tval_before, tval_after, tval_result;
-    
-    
-    
+
     long int seconds = 0.0;
     long int milliseconds = 0.0;
     for (int i = 0; i < 5; ++i) {
-        gettimeofday(&tval_before,NULL);
-        recv(accpt, buf, 1048576, 0);
-        gettimeofday(&tval_after,NULL);
-        timersub(&tval_after,&tval_before,&tval_result);
-        printf("#%d cubic: %ld.%06ld\n",i,(long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
-        seconds += (long int)tval_result.tv_sec;
-        milliseconds += (long int)tval_result.tv_usec;
+        gettimeofday(&tval_before, NULL);
+        while (numOfBytes < fileSize) {
+            numOfBytes += recv(accpt, buf, fileSize, 0);
+        }
+        numOfBytes = 0;
+        gettimeofday(&tval_after, NULL);
+        timersub(&tval_after, &tval_before, &tval_result);
+        printf("#%d cubic: %ld.%06ld\n", i, (long int) tval_result.tv_sec, (long int) tval_result.tv_usec);
+        seconds += (long int) tval_result.tv_sec;
+        milliseconds += (long int) tval_result.tv_usec;
     }
-    printf("total sum: %ld.%06ld\n", seconds,milliseconds);
-    printf("average sum: %ld.%06ld\n", seconds/5,milliseconds/5);
+    printf("total sum: %ld.%06ld\n", seconds, milliseconds);
+    printf("average sum: %ld.%06ld\n", seconds / 5, milliseconds / 5);
 
     seconds = 0.0;
     milliseconds = 0.0;
     for (int i = 0; i < 5; ++i) {
-    gettimeofday(&tval_before,NULL);
-        recv(accpt, buf, 1048576, 0);
-        gettimeofday(&tval_after,NULL);
-        timersub(&tval_after,&tval_before,&tval_result);
-        printf("#%d reno: %ld.%06ld\n",i,(long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
-        seconds += (long int)tval_result.tv_sec;
-        milliseconds += (long int)tval_result.tv_usec;
+        gettimeofday(&tval_before, NULL);
+        while (numOfBytes < fileSize) {
+            numOfBytes += recv(accpt, buf, fileSize, 0);
+        }
+        gettimeofday(&tval_after, NULL);
+        timersub(&tval_after, &tval_before, &tval_result);
+        printf("#%d reno: %ld.%06ld\n", i, (long int) tval_result.tv_sec, (long int) tval_result.tv_usec);
+        seconds += (long int) tval_result.tv_sec;
+        milliseconds += (long int) tval_result.tv_usec;
     }
-    printf("total sum: %ld.%06ld\n", seconds,milliseconds);
-    printf("average sum: %ld.%06ld\n", seconds/5,milliseconds/5);
-    
-    
+    printf("total sum: %ld.%06ld\n", seconds, milliseconds);
+    printf("average sum: %ld.%06ld\n", seconds / 5, milliseconds / 5);
+
+
     return 0;
 }

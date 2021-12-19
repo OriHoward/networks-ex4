@@ -12,21 +12,22 @@
 int sock;
 int conn;
 FILE *fp;
-char buf[1048576];
+#define fileSize 1048576
+char buf[fileSize];
 char *filename = "mb.txt";
 socklen_t len;
 int totalBytes = 0;
 struct sockaddr_in server;
 
 void send_file() {
-    char data[1048576] = {0};
+    char data[fileSize] = {0};
 
-    while (fgets(data, 1048576, fp) != NULL) {
+    while (fgets(data, fileSize, fp) != NULL) {
         if (send(sock, data, sizeof(data), 0) == -1) {
             perror("error in sending");
             exit(1);
         }
-        bzero(data, 1048576);
+        bzero(data, fileSize);
     }
 }
 
