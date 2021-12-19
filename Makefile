@@ -17,3 +17,4 @@ sender.o: sender.c
 
 clean:
 	rm -f *.o *.a strings
+

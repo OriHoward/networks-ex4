@@ -8,25 +8,25 @@
 #include <stdio.h>
 #include <netinet/tcp.h>
 #include <stdlib.h>
-
+#include <unistd.h>
 int sock;
 int conn;
 FILE *fp;
-char buf[256];
-char *filename = "1gb.txt";
+char buf[1048576];
+char *filename = "mb.txt";
 socklen_t len;
 int totalBytes = 0;
 struct sockaddr_in server;
 
 void send_file() {
-    char data[256] = {0};
+    char data[1048576] = {0};
 
-    while (fgets(data, 256, fp) != NULL) {
+    while (fgets(data, 1048576, fp) != NULL) {
         if (send(sock, data, sizeof(data), 0) == -1) {
             perror("error in sending");
             exit(1);
         }
-        bzero(data, 256);
+        bzero(data, 1048576);
     }
 }
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     //changing to reno
     strcpy(buf, "reno");
     len = strlen(buf);
-    if (setsockopt(sock, IPPROTO_TCP, TCP_CONGESTION, buf, len) != 0) {
+    if (setsockopt(sock, IPPROTO_IP, TCP_CONGESTION, buf, len) != 0) {
         perror("setsockopt");
         return -1;
     }
@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
         perror("reading file");
         exit(1);
     }
+    sleep(1);
     printf("Sending second time:\n");
     //send file second time
     for (int i = 0; i < 5; ++i) {
